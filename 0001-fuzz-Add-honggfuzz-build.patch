@@ -1,0 +1,157 @@
+From 8b15012abf98b2e46f37466bcdcf6a16a0572163 Mon Sep 17 00:00:00 2001
+From: Sideway <dev.sideway@gmail.com>
+Date: Mon, 31 May 2021 19:17:41 +0200
+Subject: [PATCH] fuzz: Add honggfuzz build
+
+---
+ bin/Makefile.am     |  2 ++
+ configure.ac        | 26 ++++++++++++++++++++++++++
+ modules/Makefile.am | 18 ++++++++++++++++++
+ src/version.c       |  5 +++++
+ test/Makefile.am    |  2 +-
+ 5 files changed, 52 insertions(+), 1 deletion(-)
+
+diff --git a/bin/Makefile.am b/bin/Makefile.am
+index 699fbd4bf0..da85951ba8 100644
+--- a/bin/Makefile.am
++++ b/bin/Makefile.am
+@@ -1,5 +1,6 @@
+ # Building vlc
+ #
++if !MINIMAL_FUZZ
+ if BUILD_VLC
+ if HAVE_OSX
+ bin_PROGRAMS = vlc-osx
+@@ -136,6 +137,7 @@ install-data-local:
+ 
+ endif
+ endif
++endif
+ 
+ .PHONY: ../modules/plugins.dat
+ 
+diff --git a/configure.ac b/configure.ac
+index c7de27e7fd..09dbee8db2 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1107,6 +1107,32 @@ AS_IF([test "${enable_debug}" != "no"], [
+   AC_DEFINE(NDEBUG)
+ ])
+ 
++dnl
++dnl  Minimal fuzzing build
++dnl
++AC_ARG_ENABLE([minimal-fuzz],
++  AS_HELP_STRING([--enable-minimal-fuzz],
++    [Only builds access, demux and fuzzing harnesses]),,
++  [enable_minimal_fuzz="no"])
++AS_IF([test "${enable_minimal_fuzz}" != "no"], [
++  AC_DEFINE(MINIMAL_FUZZ, 1, [1 when building mode is minimal for fuzzing])
++])
++AM_CONDITIONAL([MINIMAL_FUZZ], [test "${enable_minimal_fuzz}" != "no"])
++
++dnl
++dnl  hfuzz build
++dnl
++AC_ARG_ENABLE([hfuzz],
++  AS_HELP_STRING([--enable-hfuzz],
++    [Builds using hfuzz]),,
++  [enable_hfuzz="no"])
++AS_IF([test "${enable_hfuzz}" != "no"], [
++  AC_DEFINE(HFUZZ_BUILD, 1, [1 when building with hfuzz])
++  CC="hfuzz-clang"
++  CXX="hfuzz-clang++"
++])
++AM_CONDITIONAL([HFUZZ_BUILD], [test "${enable_hfuzz}" != "no"])
++
+ dnl
+ dnl  Profiling
+ dnl
+diff --git a/modules/Makefile.am b/modules/Makefile.am
+index a9b573ae8c..73129b9a1d 100644
+--- a/modules/Makefile.am
++++ b/modules/Makefile.am
+@@ -24,6 +24,8 @@ include audio_output/Makefile.am
+ include codec/Makefile.am
+ include control/Makefile.am
+ include demux/Makefile.am
++
++if !MINIMAL_FUZZ
+ include gui/Makefile.am
+ include hw/nvdec/Makefile.am
+ include hw/d3d9/Makefile.am
+@@ -32,28 +34,44 @@ include hw/vaapi/Makefile.am
+ include hw/vdpau/Makefile.am
+ include hw/mmal/Makefile.am
+ include keystore/Makefile.am
++
++endif
++
+ include logger/Makefile.am
++
++if !MINIMAL_FUZZ
+ include lua/Makefile.am
+ include meta_engine/Makefile.am
++endif
++
+ include misc/Makefile.am
+ include notify/Makefile.am
+ include packetizer/Makefile.am
+ include services_discovery/Makefile.am
++
++if !MINIMAL_FUZZ
+ include spu/Makefile.am
++endif
++
+ include stream_filter/Makefile.am
+ include stream_extractor/Makefile.am
++
++if !MINIMAL_FUZZ
+ include text_renderer/Makefile.am
+ include video_chroma/Makefile.am
+ include video_filter/Makefile.am
+ include video_splitter/Makefile.am
+ include video_output/Makefile.am
+ include visualization/Makefile.am
++
+ if ENABLE_SOUT
+ include access_output/Makefile.am
+ include mux/Makefile.am
+ include stream_out/Makefile.am
+ endif
+ 
++endif
++
+ BUILT_SOURCES += dummy.cpp
+ 
+ dummy.cpp:
+diff --git a/src/version.c b/src/version.c
+index 5a36ef576a..6911ffaccc 100644
+--- a/src/version.c
++++ b/src/version.c
+@@ -42,4 +42,9 @@ const char * VLC_##func ( void )                                            \
+ 
+ DECLARE_VLC_VERSION( CompileBy, COMPILE_BY )
+ DECLARE_VLC_VERSION( CompileHost, COMPILE_HOST )
++
++#ifdef HFUZZ_BUILD
++DECLARE_VLC_VERSION( Compiler, COMPILE_HOST )
++#else
+ DECLARE_VLC_VERSION( Compiler, COMPILER )
++#endif
+diff --git a/test/Makefile.am b/test/Makefile.am
+index b4c824fd5b..73900f7042 100644
+--- a/test/Makefile.am
++++ b/test/Makefile.am
+@@ -274,7 +274,7 @@ EXTRA_PROGRAMS += vlc-demux-run vlc-demux-dec-run
+ vlc_demux_libfuzzer_LDADD = libvlc_demux_run.la
+ vlc_demux_dec_libfuzzer_SOURCES = vlc-demux-libfuzzer.c
+ vlc_demux_dec_libfuzzer_LDADD = libvlc_demux_dec_run.la
+-if HAVE_LIBFUZZER
++if HFUZZ_BUILD
+ noinst_PROGRAMS += vlc-demux-libfuzzer vlc-demux-dec-libfuzzer vlc-demux-run vlc-demux-dec-run
+ endif
+ 
+-- 
+2.31.1
+
