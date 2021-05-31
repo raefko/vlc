@@ -18,8 +18,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
-#include "../../libvlc/test.h"
-#include "../lib/libvlc_internal.h"
+#include "test/libvlc/test.h"
+#include "lib/libvlc_internal.h"
 
 #include <vlc_strings.h>
 #include <vlc_hash.h>

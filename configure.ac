@@ -4567,24 +4567,13 @@ dnl Fuzzer (at the end not to mess dependencies FLAGS)
 dnl
 AS_VAR_IF(with_libfuzzer, no, [], [
     LIBS="-lstdc++ ${LIBM}"
-    AS_IF([test "${with_libfuzzer}" != "yes"], [
-      LIBS="$LIBS -L${with_libfuzzer}"
-    ])
-    LIBS="$LIBS -lFuzzer"
-    AX_CHECK_COMPILE_FLAG(-fsanitize-coverage=trace-pc-guard, [
-        AX_APPEND_FLAG([-fsanitize-coverage=trace-pc-guard])
-        AX_APPEND_FLAG([-fsanitize-coverage=trace-pc-guard], [CXXFLAGS])
-        AX_APPEND_COMPILE_FLAGS([-fsanitize-coverage=trace-cmp])
-        AX_APPEND_COMPILE_FLAGS([-fsanitize-coverage=trace-cmp], [CXXFLAGS])
-    ], [
-        AX_CHECK_COMPILE_FLAG(-fsanitize-coverage=trace-pc, [
-            AX_APPEND_FLAG([-fsanitize-coverage=trace-pc])
-            AX_APPEND_FLAG([-fsanitize-coverage=trace-pc], [CXXFLAGS])
+    AX_CHECK_COMPILE_FLAG(-fsanitize=fuzzer-no-link, [
+        AX_APPEND_FLAG([-fsanitize=fuzzer-no-link])
+        AX_APPEND_FLAG([-fsanitize=fuzzer-no-link], [CXXFLAGS])
         ], [
             AC_MSG_ERROR([Sanitizer coverage not supported by your compiler])
         ])
     ])
-])
 
 dnl
 dnl  Stuff used by the program

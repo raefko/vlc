@@ -22,7 +22,7 @@
 # include "config.h"
 #endif
 
-#include "../lib/libvlc_internal.h"
+#include "lib/libvlc_internal.h"
 
 #include "common.h"
 

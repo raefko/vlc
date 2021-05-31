@@ -30,8 +30,8 @@
 
 #include <vlc_common.h>
 #include <vlc_stream.h>
-#include "../../../lib/libvlc_internal.h"
-#include "../../libvlc/test.h"
+#include "lib/libvlc_internal.h"
+#include "test/libvlc/test.h"
 
 #include <vlc/vlc.h>
 

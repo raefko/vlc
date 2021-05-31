@@ -272,7 +272,9 @@ vlc_demux_dec_run_LDADD = libvlc_demux_dec_run.la
 EXTRA_PROGRAMS += vlc-demux-run vlc-demux-dec-run
 
 vlc_demux_libfuzzer_LDADD = libvlc_demux_run.la
+vlc_demux_libfuzzer_LDFLAGS = -fsanitize=fuzzer
 vlc_demux_dec_libfuzzer_SOURCES = vlc-demux-libfuzzer.c
+vlc_demux_dec_libfuzzer_LDFLAGS = -fsanitize=fuzzer
 vlc_demux_dec_libfuzzer_LDADD = libvlc_demux_dec_run.la
 if HAVE_LIBFUZZER
 noinst_PROGRAMS += vlc-demux-libfuzzer vlc-demux-dec-libfuzzer vlc-demux-run vlc-demux-dec-run

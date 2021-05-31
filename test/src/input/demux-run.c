@@ -42,7 +42,7 @@
 #include <vlc_meta.h>
 #include <vlc_es_out.h>
 #include <vlc_url.h>
-#include "../lib/libvlc_internal.h"
+#include "lib/libvlc_internal.h"
 
 #include <vlc/vlc.h>
 
