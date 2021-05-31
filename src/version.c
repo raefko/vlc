@@ -42,4 +42,9 @@ const char * VLC_##func ( void )                                            \
 
 DECLARE_VLC_VERSION( CompileBy, COMPILE_BY )
 DECLARE_VLC_VERSION( CompileHost, COMPILE_HOST )
+
+#ifdef HFUZZ_BUILD
+DECLARE_VLC_VERSION( Compiler, COMPILE_HOST )
+#else
 DECLARE_VLC_VERSION( Compiler, COMPILER )
+#endif

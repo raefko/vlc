@@ -1,5 +1,6 @@
 # Building vlc
 #
+if !MINIMAL_FUZZ
 if BUILD_VLC
 if HAVE_OSX
 bin_PROGRAMS = vlc-osx
@@ -134,6 +135,7 @@ if BUILD_VLC
 install-data-local:
 	cd "$(DESTDIR)$(bindir)"; mv vlc-osx vlc
 
+endif
 endif
 endif
 

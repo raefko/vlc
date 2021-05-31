@@ -24,6 +24,8 @@ include audio_output/Makefile.am
 include codec/Makefile.am
 include control/Makefile.am
 include demux/Makefile.am
+
+if !MINIMAL_FUZZ
 include gui/Makefile.am
 include hw/nvdec/Makefile.am
 include hw/d3d9/Makefile.am
@@ -32,26 +34,42 @@ include hw/vaapi/Makefile.am
 include hw/vdpau/Makefile.am
 include hw/mmal/Makefile.am
 include keystore/Makefile.am
+
+endif
+
 include logger/Makefile.am
+
+if !MINIMAL_FUZZ
 include lua/Makefile.am
 include meta_engine/Makefile.am
+endif
+
 include misc/Makefile.am
 include notify/Makefile.am
 include packetizer/Makefile.am
 include services_discovery/Makefile.am
+
+if !MINIMAL_FUZZ
 include spu/Makefile.am
+endif
+
 include stream_filter/Makefile.am
 include stream_extractor/Makefile.am
+
+if !MINIMAL_FUZZ
 include text_renderer/Makefile.am
 include video_chroma/Makefile.am
 include video_filter/Makefile.am
 include video_splitter/Makefile.am
 include video_output/Makefile.am
 include visualization/Makefile.am
+
 if ENABLE_SOUT
 include access_output/Makefile.am
 include mux/Makefile.am
 include stream_out/Makefile.am
+endif
+
 endif
 
 BUILT_SOURCES += dummy.cpp

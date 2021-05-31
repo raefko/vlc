@@ -1108,6 +1108,32 @@ AS_IF([test "${enable_debug}" != "no"], [
 ])
 
 dnl
+dnl  Minimal fuzzing build
+dnl
+AC_ARG_ENABLE([minimal-fuzz],
+  AS_HELP_STRING([--enable-minimal-fuzz],
+    [Only builds access, demux and fuzzing harnesses]),,
+  [enable_minimal_fuzz="no"])
+AS_IF([test "${enable_minimal_fuzz}" != "no"], [
+  AC_DEFINE(MINIMAL_FUZZ, 1, [1 when building mode is minimal for fuzzing])
+])
+AM_CONDITIONAL([MINIMAL_FUZZ], [test "${enable_minimal_fuzz}" != "no"])
+
+dnl
+dnl  hfuzz build
+dnl
+AC_ARG_ENABLE([hfuzz],
+  AS_HELP_STRING([--enable-hfuzz],
+    [Builds using hfuzz]),,
+  [enable_hfuzz="no"])
+AS_IF([test "${enable_hfuzz}" != "no"], [
+  AC_DEFINE(HFUZZ_BUILD, 1, [1 when building with hfuzz])
+  CC="hfuzz-clang"
+  CXX="hfuzz-clang++"
+])
+AM_CONDITIONAL([HFUZZ_BUILD], [test "${enable_hfuzz}" != "no"])
+
+dnl
 dnl  Profiling
 dnl
 AC_ARG_ENABLE([gprof],
